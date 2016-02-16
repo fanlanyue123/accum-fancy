@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!-- 数据库配置相关 -->
+    <context:component-scan base-package="com.fancy.simple.website.dao"/>
+
+    <!-- 数据源 -->
+    <bean id="DruidDataSource1" class="com.alibaba.druid.pool.DruidDataSource" destroy-method="close"
+          lazy-init="true">
+        <property name="driverClassName" value="${jdbc.driverClassName}"/>
+        <property name="url" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+        <property name="validationQuery" value="${jdbc.validationQuery}"/>
+    </bean>
+
+    <!-- sqlSessionFactory -->
+    <bean id="SqlSessionFactory1" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="configLocation" value="classpath:conf/mybatis-conf.xml"/>
+        <property name="mapperLocations" value="classpath:com/fancy/simple/website/dao/**/mapper/*.xml"/>
+        <property name="typeAliasesPackage" value="com.fancy.simple.website.dao.test"/>
+        <property name="dataSource" ref="DruidDataSource1"/>
+    </bean>
+
+    <!--创建数据映射器 -->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="sqlSessionFactoryBeanName" value="SqlSessionFactory1"/>
+        <property name="annotationClass" value="org.springframework.stereotype.Repository"/>
+        <property name="basePackage" value="com.fancy.simple.website.dao.test"/>
+    </bean>
+
+</beans>
